@@ -1,0 +1,125 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Floating ChatBot Button */
+.chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.chatbot-toggle:hover {
+    background-color: #45a049;
+}
+
+/* ChatBot Container (Initially Hidden) */
+.chatBot {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Header Section */
+.chatBot header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+    position: relative;
+}
+
+/* Close Button */
+#close-chatbot {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Chatbox */
+.chatbox {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Chat Messages */
+.chat {
+    max-width: 70%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Incoming Messages */
+.chat-incoming {
+    background-color: #d1e7dd;
+    align-self: flex-start;
+}
+
+/* Outgoing Messages */
+.chat-outgoing {
+    background-color: #cfe2ff;
+    align-self: flex-end;
+    text-align: right;
+}
+
+/* Button Styling (Like Chat Bubbles) */
+.chat-incoming button {
+    background-color: #e0ffe0;
+    color: #333;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px 0;
+    transition: background-color 0.3s;
+    width: 100%;
+    max-width: 100%;
+}
+
+.chat-incoming button:hover {
+    background-color: #b5e7b5;
+}
+
+/* Scrollbar Styling */
+.chatbox::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chatbox::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+}

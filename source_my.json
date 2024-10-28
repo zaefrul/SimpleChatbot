@@ -1,0 +1,143 @@
+{
+    "faq": [
+      {
+        "category": "Aplikasi MyJPJ",
+        "questions": [
+          {
+            "question": "Adakah muat turun MyJPJ wajib?",
+            "answer": "Tidak. Ia hanyalah salah satu pilihan untuk mendapatkan salinan digital cukai jalan dan lesen memandu."
+          },
+          {
+            "question": "Adakah saya akan disaman jika tidak dapat menunjukkan cukai jalan digital?",
+            "answer": "Tidak. Pegawai penguatkuasa boleh mengesahkan status melalui peranti mereka."
+          },
+          {
+            "question": "Adakah cukai jalan dan lesen perlu diperbaharui selepas tamat tempoh?",
+            "answer": "Ya. Anda perlu memperbaharui cukai jalan dan lesen. Hanya pelekat tidak perlu ditampal."
+          },
+          {
+            "question": "Bagaimana jika warga emas atau mereka tanpa telefon pintar memerlukan bukti?",
+            "answer": "Jangan risau. Format digital tidak wajib. Anda masih boleh mendapatkan pelekat cukai jalan dan lesen fizikal."
+          },
+          {
+            "question": "Bagaimana menunjukkan cukai jalan digital jika kereta dipandu oleh orang lain?",
+            "answer": "Cukai jalan digital boleh dicetak dan disimpan dalam kereta. Pegawai penguatkuasa boleh mengesahkan status melalui sistem mereka jika diperlukan."
+          },
+          {
+            "question": "Kenapa saya tidak dapat log masuk ke MyJPJ?",
+            "answer": "Kemungkinan disebabkan trafik tinggi kerana ramai pengguna cuba mendaftar pada masa yang sama."
+          }
+        ]
+      },
+      {
+        "category": "Biro Penyiasatan Kemalangan Udara (AAIB)",
+        "questions": [
+          {
+            "question": "Bagaimana cara melaporkan kemalangan pesawat?",
+            "answer": "Laporkan kepada AAIB menggunakan borang yang ditetapkan dan e-mel kepada AAIB@mot.gov.my."
+          },
+          {
+            "question": "Siapa yang perlu melaporkan kemalangan pesawat?",
+            "answer": "Kru pesawat, pemilik, pengendali, dan kakitangan penyelenggaraan diwajibkan melaporkan kemalangan."
+          },
+          {
+            "question": "Apakah maklumat yang diperlukan oleh AAIB?",
+            "answer": "Jenis, model, tanda pendaftaran pesawat, tarikh dan masa kejadian, serta maklumat kru dan penumpang."
+          },
+          {
+            "question": "Apakah peringkat laporan siasatan?",
+            "answer": "Terdapat lima peringkat: Notifikasi, Laporan Awal, Draf Laporan Akhir, Laporan Akhir, dan Kenyataan Interim."
+          }
+        ]
+      },
+      {
+        "category": "Bahagian Pengurusan dan Kewangan",
+        "questions": [
+          {
+            "question": "Apa itu aset boleh alih?",
+            "answer": "Aset yang boleh dipindahkan dari satu tempat ke tempat lain, termasuk yang dipasang bersama bangunan."
+          },
+          {
+            "question": "Apakah maksud aset modal?",
+            "answer": "Aset dengan nilai asal RM1,000 atau lebih, atau aset yang memerlukan penyelenggaraan berkala."
+          },
+          {
+            "question": "Apa definisi inventori?",
+            "answer": "Aset yang bernilai kurang daripada RM1,000 dan tidak memerlukan penyelenggaraan berkala."
+          },
+          {
+            "question": "Bagaimana syarikat boleh menyertai tender atau sebut harga?",
+            "answer": "Syarikat berdaftar boleh menyertai melalui laman e-Bidding atau sistem Kementerian Pengangkutan."
+          },
+          {
+            "question": "Bilakah permohonan pendahuluan perlu dibuat?",
+            "answer": "Permohonan mesti dihantar sekurang-kurangnya seminggu sebelum tarikh perjalanan."
+          },
+          {
+            "question": "Berapa lama proses pembayaran tuntutan?",
+            "answer": "Tuntutan lengkap diproses dalam masa 14 hari jika amaun melebihi RM50,000 tetapi kurang daripada RM500,000."
+          }
+        ]
+      },
+      {
+        "category": "Bahagian Sumber Manusia",
+        "questions": [
+          {
+            "question": "Bagaimana elaun memangku dikira?",
+            "answer": "Elaun memangku adalah berdasarkan perbezaan gaji permulaan jawatan dengan gaji semasa pegawai."
+          },
+          {
+            "question": "Bagaimana menentukan kekananan pegawai?",
+            "answer": "Berdasarkan tarikh pelantikan tetap untuk gred jawatan dan tarikh mengisi jawatan untuk gred kenaikan pangkat."
+          },
+          {
+            "question": "Bolehkah tugasan dijalankan pada hari cuti?",
+            "answer": "Tugasan mesti dijalankan pada hari bekerja."
+          },
+          {
+            "question": "Apakah perkhidmatan yang disediakan oleh Unit Pembangunan Psikologi?",
+            "answer": "Perkhidmatan ujian psikologi, kaunseling, nasihat, dan bimbingan kerjaya."
+          },
+          {
+            "question": "Apa itu kaunseling?",
+            "answer": "Kaunseling adalah proses membina hubungan antara kaunselor dan klien untuk perubahan dan penyesuaian peribadi."
+          }
+        ]
+      },
+      {
+        "category": "Bahagian Maritim",
+        "questions": [
+          {
+            "question": "Apa itu DSL?",
+            "answer": "DSL ialah lesen untuk kapal yang beroperasi dalam perairan Malaysia mengikut Polisi Kabotaj."
+          },
+          {
+            "question": "Apakah syarat untuk mendapatkan DSL?",
+            "answer": "Pemohon mestilah warganegara Malaysia atau syarikat dengan pemilikan majoriti warga Malaysia."
+          },
+          {
+            "question": "Berapa banyak pelabuhan di bawah Kementerian Pengangkutan?",
+            "answer": "Terdapat 105 kemudahan pendaratan, termasuk pelabuhan utama dan kecil."
+          }
+        ]
+      },
+      {
+        "category": "Bahagian Penerbangan",
+        "questions": [
+          {
+            "question": "Berapa banyak lapangan terbang antarabangsa di Malaysia?",
+            "answer": "Terdapat 7 lapangan terbang antarabangsa, termasuk KLIA, Penang, dan Langkawi."
+          },
+          {
+            "question": "Apakah perbezaan antara lapangan terbang dan landasan udara?",
+            "answer": "Lapangan terbang mempunyai menara kawalan dan boleh menerima pesawat besar, berbanding landasan udara."
+          },
+          {
+            "question": "Apakah perbezaan antara penerbangan berjadual dan tidak berjadual?",
+            "answer": "Penerbangan berjadual mengikut jadual tetap, manakala penerbangan tidak berjadual tidak mengikut jadual yang konsisten."
+          }
+        ]
+      }
+    ]
+  }
+  

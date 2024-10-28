@@ -1,0 +1,176 @@
+{
+    "faq": [
+        {
+            "category": "MyJPJ App",
+            "questions": [
+                {
+                    "question": "Is downloading MyJPJ mandatory?",
+                    "answer": "No. It is just one of the options for obtaining a digital copy of road tax and driving license."
+                },
+                {
+                    "question": "Will I get fined if I can't show the digital road tax?",
+                    "answer": "No. Enforcement officers can verify the status via their enforcement devices."
+                },
+                {
+                    "question": "Do I need to renew road tax and licenses after expiration?",
+                    "answer": "Yes, they need to be renewed, but no stickers are required to be pasted."
+                },
+                {
+                    "question": "What if the elderly or those without smartphones need proof?",
+                    "answer": "Don't worry. Digital formats are not mandatory; physical stickers are still available."
+                },
+                {
+                    "question": "How to show digital road tax if someone else drives the car?",
+                    "answer": "The digital road tax can be printed on paper and kept in the car."
+                },
+                {
+                    "question": "Why can’t I log in to MyJPJ?",
+                    "answer": "High traffic might prevent login as many people try to register simultaneously."
+                }
+            ]
+        },
+        {
+            "category": "Air Accident Investigation Bureau (AAIB)",
+            "questions": [
+                {
+                    "question": "How to report an aircraft accident or serious incident?",
+                    "answer": "Report to the AAIB using the designated form and email it to AAIB@mot.gov.my."
+                },
+                {
+                    "question": "Who must report an aircraft accident?",
+                    "answer": "Aircraft crew, owners, operators, maintenance staff, air traffic controllers, and Civil Aviation Authority staff."
+                },
+                {
+                    "question": "What information is needed when reporting to AAIB?",
+                    "answer": "Details like aircraft type, registration, date/time, departure/landing points, injuries, and accident nature."
+                },
+                {
+                    "question": "What are the stages of an investigation report?",
+                    "answer": "The stages include Notification, Preliminary Report, Draft Final Report, Final Report, and Interim Statement."
+                }
+            ]
+        },
+        {
+            "category": "Administration and Finance Division",
+            "questions": [
+                {
+                    "question": "What is a movable asset?",
+                    "answer": "An asset that can be transferred between locations, even if installed with a building."
+                },
+                {
+                    "question": "What are capital assets?",
+                    "answer": "Movable assets with an initial value of RM1,000 or more, or those requiring scheduled maintenance."
+                },
+                {
+                    "question": "What is the definition of inventory?",
+                    "answer": "Movable assets costing less than RM1,000 each, not requiring scheduled maintenance."
+                },
+                {
+                    "question": "How to participate in tenders or quotations?",
+                    "answer": "Registered companies can apply through the Ministry's system or e-Bidding website."
+                },
+                {
+                    "question": "When to apply for an advance?",
+                    "answer": "Applications must be sent at least a week before the trip."
+                },
+                {
+                    "question": "What is the payment timeline for claims?",
+                    "answer": "Claims are processed within 14 days for procurement exceeding RM50,000 and below RM500,000."
+                }
+            ]
+        },
+        {
+            "category": "Human Resource Management Division",
+            "questions": [
+                {
+                    "question": "How is acting allowance calculated?",
+                    "answer": "It’s based on the difference between the acting post's starting salary and the officer's current salary."
+                },
+                {
+                    "question": "How is seniority determined?",
+                    "answer": "For appointments, based on the permanent appointment date. For promotions, based on the post-filling date."
+                },
+                {
+                    "question": "Can duty coverage be instituted on holidays?",
+                    "answer": "No, it must be instituted on a working day."
+                },
+                {
+                    "question": "What are other benefits besides scholarships?",
+                    "answer": "Officers can apply for half-pay or no-pay study leave if not eligible for a scholarship."
+                },
+                {
+                    "question": "What services does the Psychology Development Unit offer?",
+                    "answer": "They provide psychological testing, counseling, advisory services, and career guidance."
+                },
+                {
+                    "question": "What is counseling?",
+                    "answer": "A relationship between a counselor and client focused on personal change and development."
+                }
+            ]
+        },
+        {
+            "category": "Maritime Division",
+            "questions": [
+                {
+                    "question": "What is DSL (Domestic Shipping License)?",
+                    "answer": "A license required for ships operating within Malaysian waters under the Cabotage Policy."
+                },
+                {
+                    "question": "What are the conditions to obtain a DSL?",
+                    "answer": "Applicants must be Malaysian citizens or companies with a majority Malaysian shareholding."
+                },
+                {
+                    "question": "How many ports are under the Ministry of Transport?",
+                    "answer": "There are 105 landing facilities, categorized into major and minor ports."
+                }
+            ]
+        },
+        {
+            "category": "Land and Logistic Division",
+            "questions": [
+                {
+                    "question": "How can disabled individuals (OKU) get a driver’s license?",
+                    "answer": "They follow the standard process, with modified vehicles allowed for the practical test."
+                },
+                {
+                    "question": "What is a tail summons, and who issues it?",
+                    "answer": "It’s a notice from the police requiring the owner to provide the driver’s details for a traffic offense."
+                },
+                {
+                    "question": "How to apply for a train land lease?",
+                    "answer": "Applications can be made using the PAK/H-01 form or directly at the Railway Assets Corporation."
+                }
+            ]
+        },
+        {
+            "category": "Aviation Division",
+            "questions": [
+                {
+                    "question": "How many international airports are in Malaysia?",
+                    "answer": "There are 7 international airports, including KLIA, Penang, and Langkawi."
+                },
+                {
+                    "question": "What airports handle international flights?",
+                    "answer": "Airports like Kota Bharu, Subang, and Sandakan also handle international flights."
+                },
+                {
+                    "question": "What is the difference between airports and airstrips?",
+                    "answer": "Airports have control towers and can handle larger aircraft compared to airstrips."
+                }
+            ]
+        },
+        {
+            "category": "Information Management Division",
+            "questions": [
+                {
+                    "question": "What personal data is collected?",
+                    "answer": "No personal data is collected unless provided via email."
+                },
+                {
+                    "question": "What happens when I link to another site?",
+                    "answer": "The privacy policy of the linked site applies, and users should read it carefully."
+                }
+            ]
+        }
+    ]
+}
