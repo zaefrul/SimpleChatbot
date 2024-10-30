@@ -7,16 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Floating Button to Open Chatbot -->
+    <!-- Floating ChatBot Button -->
     <button class="chatbot-toggle" id="chatbot-toggle">💬</button>
 
     <!-- ChatBot Container -->
     <div class="chatBot" id="chatBot">
         <header>
-            <h2>ChatBot</h2>
+            <h2>LYNA</h2>
             <span alt="Close" id="close-chatbot" onclick="toggleChatBot()">X</span>
         </header>
         <ul class="chatbox" id="chatbox"></ul>
+
+        <!-- Chat Input Section -->
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type your message..." disabled />
+            <button id="send-btn" disabled>Send</button>
+        </div>
     </div>
 
     <script src="script.js" defer></script>
