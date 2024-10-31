@@ -1,5 +1,34 @@
 let faqData = {}; // Store the FAQ data
 let currentLanguage = ''; // Track the selected language
+let isLanguageSelected = false; // Track if language is selected
+
+// Translation object for multilingual support
+const translations = {
+    en: {
+        greeting: "Hello! Please select your language:",
+        selectLanguage: "Please select a language first.",
+        loadError: "Unable to load FAQ data. Please try again.",
+        noMatch: "I couldn't find a match. Please try again or select a category.",
+        askCategory: "It seems like you’re asking about one of these categories:",
+        categoriesHeader: "Here are the categories:",
+        referringTo: "It looks like you're referring to:",
+        backToQuestions: "Back to Questions",
+        backToCategory: "Back to Category", // Added this
+        directoryDate: "It looks like you're asking about dates:",
+    },
+    my: {
+        greeting: "Hai! Sila pilih bahasa anda:",
+        selectLanguage: "Sila pilih bahasa terlebih dahulu.",
+        loadError: "Tidak dapat memuatkan data FAQ. Sila cuba lagi.",
+        noMatch: "Maaf, tiada padanan ditemui. Sila cuba lagi atau pilih kategori.",
+        askCategory: "Anda mungkin bertanya mengenai salah satu kategori ini:",
+        categoriesHeader: "Berikut adalah kategori:",
+        referringTo: "Nampaknya anda merujuk kepada:",
+        backToQuestions: "Kembali ke Soalan",
+        backToCategory: "Kembali ke Kategori", // Added this
+        directoryDate: "Nampaknya anda bertanya mengenai tarikh:",
+    }
+};
 
 // Select chat elements
 const chatbox = document.getElementById('chatbox');
@@ -14,155 +43,154 @@ const languageMap = {
     'bahasa malaysia': 'my'
 };
 
+// Register the Compromise dates plugin for NLP
+nlp.extend(window.compromiseDates);
+
+let lastSelectedCategory = null; // Store the last selected category
+
 // Toggle chatbot visibility
 function toggleChatBot() {
     chatBot.style.display = chatBot.style.display === 'none' ? 'flex' : 'none';
+    if (chatBot.style.display === 'flex') userInput.focus();
 }
 
-// Ensure data is loaded before the chatbot is used
+// Fetch FAQ data based on language selection
 async function fetchFAQData(language) {
     try {
         const languageCode = languageMap[language.toLowerCase()];
+        console.log(`Fetching data for language: ${language} (${languageCode})`);
+
         const response = await fetch(`source_${languageCode}.json`);
+        if (!response.ok) throw new Error(translations[languageCode].loadError);
+
         faqData = await response.json();
+        console.log('Data fetched successfully:', faqData);
+        
+        isLanguageSelected = true; // Set flag only after data is successfully loaded
         loadCategories();
     } catch (error) {
         console.error('Error loading FAQ data:', error);
-        addChatMessage('Sorry, there was an issue loading the FAQ data.');
+        delayedResponse(translations[languageCode].loadError);
     }
 }
 
-// Helper to display a chat message and return the message element
-function addChatMessage(content, className = 'chat-incoming', withPills = null) {
-    const message = document.createElement('li');
-    message.className = `${className} chat`;
-    message.innerHTML = `<p>${content}</p>`;
-
-    // If pills are part of the message, add them inside the same bubble
-    if (withPills) {
-        const pillsContainer = createPillsContainer(withPills);
-        message.appendChild(pillsContainer);
+function processInput(input) {
+    if (!isLanguageSelected) {
+        delayedResponse(translations[currentLanguage].selectLanguage);
+        return;
     }
 
-    chatbox.appendChild(message);
-    chatbox.scrollTop = chatbox.scrollHeight;
-    return message;
-}
+    const nlpResponse = analyzeUserInput(input); // NLP detection
 
-// Create a pills container with buttons
-function createPillsContainer(options) {
-    const pillsContainer = document.createElement('div');
-    pillsContainer.className = 'chat-pills';
-
-    options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.question || option;
-        button.onclick = () => {
-            // Add the user's selection as an outgoing message
-            addChatMessage(option.question || option, 'chat-outgoing');
-            handleUserSelection(option); // Handle the selected option
-        };
-        pillsContainer.appendChild(button);
-    });
-
-    return pillsContainer;
-}
-
-// Handle the user's selected option (category or question)
-function handleUserSelection(option) {
-    console.log("User selected:", option); // Log the user's selection
-
-    // Ensure option is either a string or extract it if it's an object
-    const selectedOption = typeof option === 'string' ? option : option.question;
-    console.log("Processed option:", selectedOption); // Debug log
-
-    // Try to find the selected category
-    const category = faqData.faq.find(cat =>
-        cat.category.toLowerCase() === selectedOption.toLowerCase()
-    );
-
-    if (category) {
-        console.log("Category found:", category); // Debug log
-        lastSelectedCategory = category; // Store the selected category
-        loadQuestions(category); // Load the questions for the selected category
-    } else if (lastSelectedCategory && lastSelectedCategory.questions) {
-        // Check if the selected option matches a question in the last category
-        const question = lastSelectedCategory.questions.find(q =>
-            q.question.toLowerCase() === selectedOption.toLowerCase()
-        );
-
-        if (question) {
-            console.log("Question found:", question); // Debug log
-            showAnswer(question, lastSelectedCategory); // Show the answer
-        } else {
-            console.warn("No matching question found."); // Debug log
-            delayedResponse("Sorry, I couldn't find that question. Please try again.");
-        }
+    if (nlpResponse) {
+        delayedResponse(nlpResponse); // Handle NLP-detected response
     } else {
-        console.error("No valid category or question context available."); // Debug log
-        delayedResponse("Please select a category first.");
-    }
-}
-
-// Show typing indicator with bouncing dots
-function showTypingIndicator() {
-    const typingIndicator = document.createElement('li');
-    typingIndicator.className = 'chat-incoming typing-indicator';
-
-    // Create dots container
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'dots';
-
-    // Create 3 bouncing dots
-    for (let i = 0; i < 3; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        dotsContainer.appendChild(dot);
-    }
-
-    typingIndicator.appendChild(dotsContainer);
-    chatbox.appendChild(typingIndicator);
-    chatbox.scrollTop = chatbox.scrollHeight;
-
-    return typingIndicator;
-}
-
-// Hide typing indicator
-function hideTypingIndicator(indicator) {
-    if (indicator) chatbox.removeChild(indicator);
-}
-
-// Handle delayed response with optional pills
-function delayedResponse(content, pills = null, delay = 1000) {
-    const typingIndicator = showTypingIndicator();
-    setTimeout(() => {
-        hideTypingIndicator(typingIndicator);
-        addChatMessage(content, 'chat-incoming', pills);
-    }, delay);
-}
-
-// Delayed response with optional pills
-function delayedResponseWithPills(content, pills = null, delay = 1000) {
-    const indicator = showTypingIndicator();
-    setTimeout(() => {
-        hideTypingIndicator(indicator);
-        addChatMessage(content);
-        if (pills) {
-            const pillsContainer = createPillsContainer(pills, handleUserSelection);
-            chatbox.appendChild(pillsContainer);
+        // Check if input is the "Back to Questions" action
+        if (input.toLowerCase() === translations[currentLanguage].backToQuestions.toLowerCase() && lastSelectedCategory) {
+            loadQuestions(lastSelectedCategory); // Reload questions for the last selected category
+            return;
         }
-    }, delay);
+
+        // Check if input is the "Back to Category" action
+        if (input.toLowerCase() === translations[currentLanguage].backToCategory.toLowerCase()) {
+            loadCategories(); // Reload the categories list
+            lastSelectedCategory = null; // Reset selected category
+            return;
+        }
+
+        // Check if input matches a category first
+        const matchingCategory = findCategoryByName(input);
+        if (matchingCategory) {
+            loadQuestions(matchingCategory); // Load questions if a category is recognized
+            lastSelectedCategory = matchingCategory; // Store selected category for future use
+            return;
+        }
+
+        // Check if input matches a question in the last selected category
+        if (lastSelectedCategory) {
+            const matchingQuestion = findQuestionByName(lastSelectedCategory, input);
+            if (matchingQuestion) {
+                showAnswer(matchingQuestion); // Display the answer if a question is found
+                return;
+            }
+        }
+
+        // Fallback if no match for question or category
+        const matchingCategories = findMatchingCategories(input);
+        if (matchingCategories.length > 0) {
+            delayedResponse(translations[currentLanguage].askCategory, matchingCategories);
+        } else {
+            delayedResponse(translations[currentLanguage].noMatch);
+            loadCategories(); // Fallback to showing all categories
+        }
+    }
 }
 
-// Show greeting when the chatbot launches
-function showGreeting() {
-    delayedResponse('Hello! Please select your language / Sila pilih bahasa anda:', 0);
-    showLanguageSelection();
+// Helper function to find a category based on input, supporting both languages
+function findCategoryByName(input) {
+    return faqData.faq.find(cat =>
+        cat.category.toLowerCase() === input.toLowerCase()
+    );
 }
 
-// Show language selection as pills
-function showLanguageSelection() {
-    createPills(['English', 'Bahasa Malaysia'], selectLanguage);
+// Helper function to find a question by name in the specified category
+function findQuestionByName(category, questionText) {
+    return category.questions.find(q =>
+        q.question.toLowerCase() === questionText.toLowerCase()
+    );
+}
+
+
+// Analyze user input using Compromise.js (only for NLP purposes)
+const DIRECTORY_URL = "https://yourwebsite.com/directory";
+
+function analyzeUserInput(input) {
+    const doc = nlp(input); // Parse input with Compromise.js
+
+    // Detect dates
+    const dates = doc.dates().out('array');
+    if (dates.length > 0) {
+        return `${translations[currentLanguage].directoryDate} ${dates.join(', ')}`;
+    }
+
+    // Detect people names and create pills for navigation to directory
+    const people = doc.people().out('array');
+    if (people.length > 0) {
+        const namePills = people.map(name => ({
+            question: name,
+            url: `${DIRECTORY_URL}?search=${encodeURIComponent(name)}`
+        }));
+        delayedResponse(translations[currentLanguage].referringTo, namePills);
+        return null; // Pills are created, so no further response is needed here
+    }
+
+    return null; // Return null if no specific entities are found
+}
+
+// Find a question across all categories based on input
+function findQuestionInAllCategories(input) {
+    for (let category of faqData.faq) {
+        const question = category.questions.find(q =>
+            q.question.toLowerCase().includes(input.toLowerCase())
+        );
+        if (question) return { question, category };
+    }
+    return null; // No match found
+}
+
+// Find matching categories based on input without causing a loop
+function findMatchingCategories(input) {
+    return faqData.faq
+        .filter(cat => cat.category.toLowerCase().includes(input.toLowerCase()))
+        .map(cat => ({ question: cat.category }));
+}
+
+// Handle language selection (disables NLP until language is selected)
+function handleLanguageSelection(language) {
+    currentLanguage = languageMap[language.toLowerCase()]; // Set current language code
+    addChatMessage(translations[currentLanguage].greeting, 'chat-outgoing');
+    fetchFAQData(language);
+    enableChatInput();
 }
 
 // Enable chat input after language selection
@@ -171,121 +199,121 @@ function enableChatInput() {
     sendButton.disabled = false;
 }
 
-// Define selectLanguage to load data and update state
-function selectLanguage(language) {
-    currentLanguage = language;
-    addChatMessage(`Language selected: ${language}`, 'chat-outgoing');
-    fetchFAQData(language);
-    enableChatInput();
-}
-
-// Handle user input and respond
-sendButton.addEventListener('click', handleUserInput);
-
-// Listen for "Enter" key press to send message
-userInput.addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-        handleUserInput();
-    }
-});
-
-function handleUserInput() {
-    const input = userInput.value.trim();
-    if (!input) return;
-
-    // Add user message aligned to the right
-    addChatMessage(input, 'chat-outgoing');
-    userInput.value = '';
-
-    processInput(input);
-}
-
-let lastSelectedCategory = null; // Store the last selected category
-
-// Process user input to handle categories and context
-function processInput(input) {
-    const category = faqData.faq.find(cat => cat.category.toLowerCase() === input.toLowerCase());
-
-    if (category) {
-        lastSelectedCategory = category; // Store the selected category
-        loadQuestions(category);
-    } else if (lastSelectedCategory) {
-        const relatedQuestions = findRelatedQuestions(input);
-        if (relatedQuestions.length > 0) {
-            delayedResponse('Did you mean one of these questions?');
-            createPills(relatedQuestions, questionText => {
-                const question = relatedQuestions.find(q => q.question === questionText);
-                showAnswer(question, lastSelectedCategory);
-            });
-        } else {
-            delayedResponse(`I couldn't find a match. Please try asking something else.`);
-        }
+// Handle user selection (for categories or questions)
+function handleUserSelection(option) {
+    const selectedOption = option.question || option;
+    
+    // Check if selection is for language, and handle appropriately
+    if (selectedOption.toLowerCase() in languageMap) {
+        handleLanguageSelection(selectedOption);
     } else {
-        delayedResponse(`Please select a category first or try asking a relevant question.`);
+        addChatMessage(selectedOption, 'chat-outgoing');
+        processInput(selectedOption);
     }
 }
 
-// Improved keyword-based matching for related questions
-function findRelatedQuestions(input) {
-    const inputKeywords = input.toLowerCase().split(/\s+/); // Split input into keywords
-    const relatedQuestions = [];
-
-    faqData.faq.forEach(category => {
-        category.questions.forEach(question => {
-            const questionText = question.question.toLowerCase();
-
-            // Check if at least one input keyword matches the question text
-            const hasMatch = inputKeywords.some(keyword => questionText.includes(keyword));
-
-            if (hasMatch) {
-                relatedQuestions.push({ ...question, category });
-            }
-        });
-    });
-
-    return relatedQuestions;
+// Add chat message dynamically
+function addChatMessage(content, className = 'chat-incoming', pills = null) {
+    const message = document.createElement('li');
+    message.className = `${className} chat`;
+    message.innerHTML = `<p>${content}</p>`;
+    if (pills) message.appendChild(createPillsContainer(pills));
+    chatbox.appendChild(message);
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
 
-// Create pills for options (Bot's response)
-function createPills(options, callback) {
+// Create pills dynamically
+function createPillsContainer(options) {
     const pillsContainer = document.createElement('div');
     pillsContainer.className = 'chat-pills';
 
     options.forEach(option => {
         const button = document.createElement('button');
         button.textContent = option.question || option;
-        button.onclick = () => {
-            // Add the user's selection as an outgoing message
-            addChatMessage(option.question || option, 'chat-outgoing');
-            callback(option.question || option);
-        };
+
+        // Check for custom URL and set click handler to redirect
+        if (option.url) {
+            button.onclick = () => window.open(option.url, '_blank');
+        } else {
+            button.onclick = () => handleUserSelection(option);
+        }
+
         pillsContainer.appendChild(button);
     });
 
-    chatbox.appendChild(pillsContainer);
-    chatbox.scrollTop = chatbox.scrollHeight;
+    return pillsContainer;
 }
 
-// Example usage of delayedResponse with pills
+// Show list of categories
 function loadCategories() {
-    const categories = faqData.faq.map(cat => cat.category);
-    delayedResponse('Here are the categories:', categories.map(cat => ({ question: cat })));
+    const categories = faqData.faq.map(cat => ({ question: cat.category }));
+    delayedResponse(translations[currentLanguage].categoriesHeader, categories);
 }
 
-// Load questions for a selected category
+// Load questions for the matched category with "Back to Category" option
 function loadQuestions(category) {
-    const questions = category.questions.map(q => q.question);
-    delayedResponse(`Selected Category: ${category.category}`, questions.map(q => ({ question: q })));
+    const questions = category.questions.map(q => ({ question: q.question }));
+    const backToCategoryPill = { question: translations[currentLanguage].backToCategory };
+    delayedResponse(`${translations[currentLanguage].categoriesHeader} ${category.category}`, [...questions, backToCategoryPill]);
 }
 
-// Show the answer to a question with a back option
-function showAnswer(question, category) {
-    delayedResponse(question.answer, [{ question: 'Back to Questions' }], 500);
-    lastSelectedCategory = category;
+// Show the answer to a matched question
+function showAnswer(question) {
+    delayedResponse(question.answer, [{ question: translations[currentLanguage].backToQuestions }], 500);
+    // Do not reset lastSelectedCategory here to allow "Back to Questions" functionality
+}
+
+// Delayed response with typing indicator
+function delayedResponse(content, pills = null, delay = 1000) {
+    const typingIndicator = showTypingIndicator();
+    setTimeout(() => {
+        hideTypingIndicator(typingIndicator);
+        addChatMessage(content, 'chat-incoming', pills);
+    }, delay);
+}
+
+// Display typing indicator
+function showTypingIndicator() {
+    const typing = document.createElement('li');
+    typing.className = 'chat-incoming typing-indicator';
+    typing.innerHTML = `
+        <div class="dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>`;
+    chatbox.appendChild(typing);
+    chatbox.scrollTop = chatbox.scrollHeight;
+    return typing;
+}
+
+// Hide typing indicator
+function hideTypingIndicator(indicator) {
+    if (indicator) chatbox.removeChild(indicator);
+}
+
+// Show greeting message with language selection pills
+function showGreeting() {
+    const languages = [
+        { question: 'English', language: 'English' },
+        { question: 'Bahasa Malaysia', language: 'Bahasa Malaysia' }
+    ];
+    delayedResponse(translations['en'].greeting, languages); // Initial greeting in English
 }
 
 // Initialize chatbot on page load
 window.onload = showGreeting;
 
-// Event listener to toggle chatbot visibility
+// Event listeners for chatbot interaction
 toggleButton.addEventListener('click', toggleChatBot);
+sendButton.addEventListener('click', handleUserInput);
+userInput.addEventListener('keypress', event => {
+    if (event.key === 'Enter') handleUserInput();
+});
+
+// Handle user input from the text field
+function handleUserInput() {
+    const input = userInput.value.trim();
+    if (!input) return;
+    addChatMessage(input, 'chat-outgoing');
+    userInput.value = '';
+    processInput(input);
+}
