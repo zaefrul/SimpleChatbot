@@ -5,7 +5,8 @@ let isLanguageSelected = false; // Track if language is selected
 // Translation object for multilingual support
 const translations = {
     en: {
-        greeting: "Hello! Please select your language:",
+        greeting: "Hello and welcome! I’m LYNA, your friendly assistant here to help you with any questions or information you need.",
+        greeting_continue: "😊 To get started, please select your preferred language:",
         selectLanguage: "Please select a language first.",
         loadError: "Unable to load FAQ data. Please try again.",
         noMatch: "I couldn't find a match. Please try again or select a category.",
@@ -17,7 +18,8 @@ const translations = {
         directoryDate: "It looks like you're asking about dates:",
     },
     my: {
-        greeting: "Hai! Sila pilih bahasa anda:",
+        greeting: "Hai dan selamat datang! Saya LYNA, pembantu mesra anda yang sedia membantu dengan apa sahaja soalan atau maklumat yang anda perlukan.",
+        greeting_continue: "😊 Untuk mula, sila pilih bahasa pilihan anda:",
         selectLanguage: "Sila pilih bahasa terlebih dahulu.",
         loadError: "Tidak dapat memuatkan data FAQ. Sila cuba lagi.",
         noMatch: "Maaf, tiada padanan ditemui. Sila cuba lagi atau pilih kategori.",
@@ -296,11 +298,12 @@ function showGreeting() {
         { question: 'English', language: 'English' },
         { question: 'Bahasa Malaysia', language: 'Bahasa Malaysia' }
     ];
-    delayedResponse(translations['en'].greeting, languages); // Initial greeting in English
+    delayedResponse(`${translations['my'].greeting} / ${translations['en'].greeting}`); // Initial greeting in English
+    delayedResponse(`${translations['my'].greeting_continue} / ${translations['en'].greeting_continue}`, languages, 1500);
 }
 
 // Initialize chatbot on page load
-window.onload = showGreeting;
+// window.onload = showGreeting;
 
 // Event listeners for chatbot interaction
 toggleButton.addEventListener('click', toggleChatBot);
