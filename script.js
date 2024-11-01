@@ -9,9 +9,19 @@ const translations = {
         greeting_continue: "😊 To get started, please select your preferred language:",
         selectLanguage: "Please select a language first.",
         loadError: "Unable to load FAQ data. Please try again.",
-        noMatch: "I couldn't find a match. Please try again or select a category.",
+        noMatch: `
+                    <p>I'm really sorry, I couldn't find a match for that. Please try rephrasing or select a category.</p>
+                    <p>If you need further assistance, feel free to reach out to our support team:</p>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li style="margin-bottom: 5px;"><strong>📞 Phone:</strong> <a href="tel:0380008000">03-8000 8000</a></li>
+                        <li style="margin-bottom: 5px;"><strong>📞 Toll-Free:</strong> <a href="tel:1800887723">1800 88 7723</a></li>
+                        <li style="margin-bottom: 5px;"><strong>✉️ Email:</strong> <a href="mailto:aduan@mot.gov.my">aduan@mot.gov.my</a></li>
+                    </ul>
+                    <p>We’re here to help!</p>
+                `,
         askCategory: "It seems like you’re asking about one of these categories:",
-        categoriesHeader: "Here are the categories:",
+        categoriesHeader: "Great! Here’s what I can help you with. Choose a category to get started:",
+        questionsHeader: "Wonderful choice! Here are some common questions. Please select one to learn more:",
         referringTo: "It looks like you're referring to:",
         backToQuestions: "Back to Questions",
         backToCategory: "Back to Category", // Added this
@@ -22,9 +32,19 @@ const translations = {
         greeting_continue: "😊 Untuk mula, sila pilih bahasa pilihan anda:",
         selectLanguage: "Sila pilih bahasa terlebih dahulu.",
         loadError: "Tidak dapat memuatkan data FAQ. Sila cuba lagi.",
-        noMatch: "Maaf, tiada padanan ditemui. Sila cuba lagi atau pilih kategori.",
+        noMatch: `
+                    <p>Maaf sangat, saya tak dapat mencari padanan untuk itu. Sila cuba lagi atau pilih kategori.</p>
+                    <p>Jika anda perlukan bantuan lanjut, hubungi pasukan sokongan kami:</p>
+                    <ul style="list-style-type: none; padding-left: 0;">
+                        <li style="margin-bottom: 5px;"><strong>📞 Telefon:</strong> <a href="tel:0380008000">03-8000 8000</a></li>
+                        <li style="margin-bottom: 5px;"><strong>📞 Talian Bebas:</strong> <a href="tel:1800887723">1800 88 7723</a></li>
+                        <li style="margin-bottom: 5px;"><strong>✉️ Emel:</strong> <a href="mailto:aduan@mot.gov.my">aduan@mot.gov.my</a></li>
+                    </ul>
+                    <p>Kami sedia membantu anda!</p>
+                `,
         askCategory: "Anda mungkin bertanya mengenai salah satu kategori ini:",
-        categoriesHeader: "Berikut adalah kategori:",
+        categoriesHeader: "Bagus! Berikut adalah pilihan yang saya boleh bantu. Pilih kategori untuk bermula:",
+        questionsHeader: "Pilihan yang bagus! Berikut adalah soalan-soalan biasa. Sila pilih satu untuk maklumat lanjut:",
         referringTo: "Nampaknya anda merujuk kepada:",
         backToQuestions: "Kembali ke Soalan",
         backToCategory: "Kembali ke Kategori", // Added this
@@ -52,8 +72,13 @@ let lastSelectedCategory = null; // Store the last selected category
 
 // Toggle chatbot visibility
 function toggleChatBot() {
+    // clear chatbox when chatbot is hidden
+    if (chatBot.style.display === 'none') {
+        chatbox.innerHTML = '';
+        lastSelectedCategory = null; // Reset selected category
+    }
     chatBot.style.display = chatBot.style.display === 'none' ? 'flex' : 'none';
-    if (chatBot.style.display === 'flex') userInput.focus();
+    if (chatBot.style.display === 'flex') userInput.focus(); showGreeting();
 }
 
 // Fetch FAQ data based on language selection
@@ -190,7 +215,7 @@ function findMatchingCategories(input) {
 // Handle language selection (disables NLP until language is selected)
 function handleLanguageSelection(language) {
     currentLanguage = languageMap[language.toLowerCase()]; // Set current language code
-    addChatMessage(translations[currentLanguage].greeting, 'chat-outgoing');
+    addChatMessage(language, 'chat-outgoing');
     fetchFAQData(language);
     enableChatInput();
 }
@@ -256,7 +281,7 @@ function loadCategories() {
 function loadQuestions(category) {
     const questions = category.questions.map(q => ({ question: q.question }));
     const backToCategoryPill = { question: translations[currentLanguage].backToCategory };
-    delayedResponse(`${translations[currentLanguage].categoriesHeader} ${category.category}`, [...questions, backToCategoryPill]);
+    delayedResponse(`${translations[currentLanguage].questionsHeader } ${category.category}`, [...questions, backToCategoryPill]);
 }
 
 // Show the answer to a matched question
