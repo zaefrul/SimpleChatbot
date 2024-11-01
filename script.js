@@ -1,319 +1,85 @@
-let faqData = {}; // Store the FAQ data
-let currentLanguage = ''; // Track the selected language
-let isLanguageSelected = false; // Track if language is selected
+document.addEventListener("DOMContentLoaded", () => {
+    const chatbotToggle = document.getElementById("chatbot-toggle");
+    const chatBot = document.getElementById("chatBot");
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("user-input");
+    const sendButton = document.getElementById("send-btn");
+    const rasaURL = "http://127.0.0.1:5005/webhooks/rest/webhook";
 
-// Translation object for multilingual support
-const translations = {
-    en: {
-        greeting: "Hello! Please select your language:",
-        selectLanguage: "Please select a language first.",
-        loadError: "Unable to load FAQ data. Please try again.",
-        noMatch: "I couldn't find a match. Please try again or select a category.",
-        askCategory: "It seems like you’re asking about one of these categories:",
-        categoriesHeader: "Here are the categories:",
-        referringTo: "It looks like you're referring to:",
-        backToQuestions: "Back to Questions",
-        backToCategory: "Back to Category", // Added this
-        directoryDate: "It looks like you're asking about dates:",
-    },
-    my: {
-        greeting: "Hai! Sila pilih bahasa anda:",
-        selectLanguage: "Sila pilih bahasa terlebih dahulu.",
-        loadError: "Tidak dapat memuatkan data FAQ. Sila cuba lagi.",
-        noMatch: "Maaf, tiada padanan ditemui. Sila cuba lagi atau pilih kategori.",
-        askCategory: "Anda mungkin bertanya mengenai salah satu kategori ini:",
-        categoriesHeader: "Berikut adalah kategori:",
-        referringTo: "Nampaknya anda merujuk kepada:",
-        backToQuestions: "Kembali ke Soalan",
-        backToCategory: "Kembali ke Kategori", // Added this
-        directoryDate: "Nampaknya anda bertanya mengenai tarikh:",
-    }
-};
-
-// Select chat elements
-const chatbox = document.getElementById('chatbox');
-const chatBot = document.getElementById('chatBot');
-const toggleButton = document.getElementById('chatbot-toggle');
-const userInput = document.getElementById('user-input');
-const sendButton = document.getElementById('send-btn');
-
-// Language map for filenames
-const languageMap = {
-    'english': 'en',
-    'bahasa malaysia': 'my'
-};
-
-// Register the Compromise dates plugin for NLP
-nlp.extend(window.compromiseDates);
-
-let lastSelectedCategory = null; // Store the last selected category
-
-// Toggle chatbot visibility
-function toggleChatBot() {
-    chatBot.style.display = chatBot.style.display === 'none' ? 'flex' : 'none';
-    if (chatBot.style.display === 'flex') userInput.focus();
-}
-
-// Fetch FAQ data based on language selection
-async function fetchFAQData(language) {
-    try {
-        const languageCode = languageMap[language.toLowerCase()];
-        console.log(`Fetching data for language: ${language} (${languageCode})`);
-
-        const response = await fetch(`source_${languageCode}.json`);
-        if (!response.ok) throw new Error(translations[languageCode].loadError);
-
-        faqData = await response.json();
-        console.log('Data fetched successfully:', faqData);
-        
-        isLanguageSelected = true; // Set flag only after data is successfully loaded
-        loadCategories();
-    } catch (error) {
-        console.error('Error loading FAQ data:', error);
-        delayedResponse(translations[languageCode].loadError);
-    }
-}
-
-function processInput(input) {
-    if (!isLanguageSelected) {
-        delayedResponse(translations[currentLanguage].selectLanguage);
-        return;
+    // Toggle chatbot visibility
+    chatbotToggle.addEventListener("click", toggleChatBot);
+    function toggleChatBot() {
+        chatBot.style.display = chatBot.style.display === "none" ? "flex" : "none";
+        userInput.disabled = !userInput.disabled;
+        sendButton.disabled = !sendButton.disabled;
     }
 
-    const nlpResponse = analyzeUserInput(input); // NLP detection
+    // Function to add messages to chat
+    function addChatMessage(message, className) {
+        const messageElement = document.createElement("li");
+        messageElement.className = `chat ${className}`;
+        messageElement.innerText = message;
+        chatbox.appendChild(messageElement);
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
 
-    if (nlpResponse) {
-        delayedResponse(nlpResponse); // Handle NLP-detected response
-    } else {
-        // Check if input is the "Back to Questions" action
-        if (input.toLowerCase() === translations[currentLanguage].backToQuestions.toLowerCase() && lastSelectedCategory) {
-            loadQuestions(lastSelectedCategory); // Reload questions for the last selected category
-            return;
+    // Function to show typing indicator
+    function showTypingIndicator() {
+        const typingIndicator = document.createElement("li");
+        typingIndicator.className = "chat typing-indicator";
+        typingIndicator.innerHTML = `<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+        chatbox.appendChild(typingIndicator);
+        chatbox.scrollTop = chatbox.scrollHeight;
+        return typingIndicator;
+    }
+
+    // Function to hide typing indicator
+    function hideTypingIndicator(typingIndicator) {
+        if (typingIndicator) {
+            chatbox.removeChild(typingIndicator);
         }
+    }
 
-        // Check if input is the "Back to Category" action
-        if (input.toLowerCase() === translations[currentLanguage].backToCategory.toLowerCase()) {
-            loadCategories(); // Reload the categories list
-            lastSelectedCategory = null; // Reset selected category
-            return;
-        }
+    // Send message to Rasa
+    async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
 
-        // Check if input matches a category first
-        const matchingCategory = findCategoryByName(input);
-        if (matchingCategory) {
-            loadQuestions(matchingCategory); // Load questions if a category is recognized
-            lastSelectedCategory = matchingCategory; // Store selected category for future use
-            return;
-        }
+        // Display user's message
+        addChatMessage(message, "chat-outgoing");
+        userInput.value = "";
 
-        // Check if input matches a question in the last selected category
-        if (lastSelectedCategory) {
-            const matchingQuestion = findQuestionByName(lastSelectedCategory, input);
-            if (matchingQuestion) {
-                showAnswer(matchingQuestion); // Display the answer if a question is found
-                return;
+        // Show typing indicator while waiting for response
+        const typingIndicator = showTypingIndicator();
+
+        // Send message to Rasa API
+        try {
+            const response = await fetch(rasaURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sender: "user", message })
+            });
+            const data = await response.json();
+
+            // Hide typing indicator
+            hideTypingIndicator(typingIndicator);
+
+            // Display Rasa's response
+            if (data.length > 0) {
+                data.forEach((msg) => addChatMessage(msg.text, "chat-incoming"));
+            } else {
+                addChatMessage("I'm not sure how to respond to that.", "chat-incoming");
             }
-        }
-
-        // Fallback if no match for question or category
-        const matchingCategories = findMatchingCategories(input);
-        if (matchingCategories.length > 0) {
-            delayedResponse(translations[currentLanguage].askCategory, matchingCategories);
-        } else {
-            delayedResponse(translations[currentLanguage].noMatch);
-            loadCategories(); // Fallback to showing all categories
+        } catch (error) {
+            hideTypingIndicator(typingIndicator);
+            addChatMessage("Error: Unable to connect to the chatbot server.", "chat-incoming");
+            console.error("Error connecting to Rasa:", error);
         }
     }
-}
 
-// Helper function to find a category based on input, supporting both languages
-function findCategoryByName(input) {
-    return faqData.faq.find(cat =>
-        cat.category.toLowerCase() === input.toLowerCase()
-    );
-}
-
-// Helper function to find a question by name in the specified category
-function findQuestionByName(category, questionText) {
-    return category.questions.find(q =>
-        q.question.toLowerCase() === questionText.toLowerCase()
-    );
-}
-
-
-// Analyze user input using Compromise.js (only for NLP purposes)
-const DIRECTORY_URL = "https://yourwebsite.com/directory";
-
-function analyzeUserInput(input) {
-    const doc = nlp(input); // Parse input with Compromise.js
-
-    // Detect dates
-    const dates = doc.dates().out('array');
-    if (dates.length > 0) {
-        return `${translations[currentLanguage].directoryDate} ${dates.join(', ')}`;
-    }
-
-    // Detect people names and create pills for navigation to directory
-    const people = doc.people().out('array');
-    if (people.length > 0) {
-        const namePills = people.map(name => ({
-            question: name,
-            url: `${DIRECTORY_URL}?search=${encodeURIComponent(name)}`
-        }));
-        delayedResponse(translations[currentLanguage].referringTo, namePills);
-        return null; // Pills are created, so no further response is needed here
-    }
-
-    return null; // Return null if no specific entities are found
-}
-
-// Find a question across all categories based on input
-function findQuestionInAllCategories(input) {
-    for (let category of faqData.faq) {
-        const question = category.questions.find(q =>
-            q.question.toLowerCase().includes(input.toLowerCase())
-        );
-        if (question) return { question, category };
-    }
-    return null; // No match found
-}
-
-// Find matching categories based on input without causing a loop
-function findMatchingCategories(input) {
-    return faqData.faq
-        .filter(cat => cat.category.toLowerCase().includes(input.toLowerCase()))
-        .map(cat => ({ question: cat.category }));
-}
-
-// Handle language selection (disables NLP until language is selected)
-function handleLanguageSelection(language) {
-    currentLanguage = languageMap[language.toLowerCase()]; // Set current language code
-    addChatMessage(translations[currentLanguage].greeting, 'chat-outgoing');
-    fetchFAQData(language);
-    enableChatInput();
-}
-
-// Enable chat input after language selection
-function enableChatInput() {
-    userInput.disabled = false;
-    sendButton.disabled = false;
-}
-
-// Handle user selection (for categories or questions)
-function handleUserSelection(option) {
-    const selectedOption = option.question || option;
-    
-    // Check if selection is for language, and handle appropriately
-    if (selectedOption.toLowerCase() in languageMap) {
-        handleLanguageSelection(selectedOption);
-    } else {
-        addChatMessage(selectedOption, 'chat-outgoing');
-        processInput(selectedOption);
-    }
-}
-
-// Add chat message dynamically
-function addChatMessage(content, className = 'chat-incoming', pills = null) {
-    const message = document.createElement('li');
-    message.className = `${className} chat`;
-    message.innerHTML = `<p>${content}</p>`;
-    if (pills) message.appendChild(createPillsContainer(pills));
-    chatbox.appendChild(message);
-    chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-// Create pills dynamically
-function createPillsContainer(options) {
-    const pillsContainer = document.createElement('div');
-    pillsContainer.className = 'chat-pills';
-
-    options.forEach(option => {
-        const button = document.createElement('button');
-        button.textContent = option.question || option;
-
-        // Check for custom URL and set click handler to redirect
-        if (option.url) {
-            button.onclick = () => window.open(option.url, '_blank');
-        } else {
-            button.onclick = () => handleUserSelection(option);
-        }
-
-        pillsContainer.appendChild(button);
+    // Send message on button click or Enter key
+    sendButton.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
     });
-
-    return pillsContainer;
-}
-
-// Show list of categories
-function loadCategories() {
-    const categories = faqData.faq.map(cat => ({ question: cat.category }));
-    delayedResponse(translations[currentLanguage].categoriesHeader, categories);
-}
-
-// Load questions for the matched category with "Back to Category" option
-function loadQuestions(category) {
-    const questions = category.questions.map(q => ({ question: q.question }));
-    const backToCategoryPill = { question: translations[currentLanguage].backToCategory };
-    delayedResponse(`${translations[currentLanguage].categoriesHeader} ${category.category}`, [...questions, backToCategoryPill]);
-}
-
-// Show the answer to a matched question
-function showAnswer(question) {
-    delayedResponse(question.answer, [{ question: translations[currentLanguage].backToQuestions }], 500);
-    // Do not reset lastSelectedCategory here to allow "Back to Questions" functionality
-}
-
-// Delayed response with typing indicator
-function delayedResponse(content, pills = null, delay = 1000) {
-    const typingIndicator = showTypingIndicator();
-    setTimeout(() => {
-        hideTypingIndicator(typingIndicator);
-        addChatMessage(content, 'chat-incoming', pills);
-    }, delay);
-}
-
-// Display typing indicator
-function showTypingIndicator() {
-    const typing = document.createElement('li');
-    typing.className = 'chat-incoming typing-indicator';
-    typing.innerHTML = `
-        <div class="dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>`;
-    chatbox.appendChild(typing);
-    chatbox.scrollTop = chatbox.scrollHeight;
-    return typing;
-}
-
-// Hide typing indicator
-function hideTypingIndicator(indicator) {
-    if (indicator) chatbox.removeChild(indicator);
-}
-
-// Show greeting message with language selection pills
-function showGreeting() {
-    const languages = [
-        { question: 'English', language: 'English' },
-        { question: 'Bahasa Malaysia', language: 'Bahasa Malaysia' }
-    ];
-    delayedResponse(translations['en'].greeting, languages); // Initial greeting in English
-}
-
-// Initialize chatbot on page load
-window.onload = showGreeting;
-
-// Event listeners for chatbot interaction
-toggleButton.addEventListener('click', toggleChatBot);
-sendButton.addEventListener('click', handleUserInput);
-userInput.addEventListener('keypress', event => {
-    if (event.key === 'Enter') handleUserInput();
 });
-
-// Handle user input from the text field
-function handleUserInput() {
-    const input = userInput.value.trim();
-    if (!input) return;
-    addChatMessage(input, 'chat-outgoing');
-    userInput.value = '';
-    processInput(input);
-}
