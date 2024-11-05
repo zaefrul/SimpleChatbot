@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatbox = document.getElementById("chatbox");
   const chatBot = document.getElementById("chatBot");
   const toggleButton = document.getElementById("chatbot-toggle");
-  const colseChatBot = document.getElementById("close-chatbot");
+  const closeChatBot = document.getElementById("close-chatbot");
   const userInput = document.getElementById("user-input");
-  const sendButton = document.getElementById("send-btn");
+  const sendLink = document.getElementById("send-link");
 
   // Language map for filenames
   const languageMap = {
@@ -81,24 +81,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Toggle chatbot visibility
   function toggleChatBot() {
-    // clear chatbox when chatbot is hidden
-    if (chatBot.style.display === "none") {
-      chatbox.innerHTML = "";
-      lastSelectedCategory = null; // Reset selected category
+    if (chatBot.classList.contains("hidden")) {
+        chatbox.innerHTML = "";
+        lastSelectedCategory = null; // Reset selected category
     }
-    chatBot.style.display = chatBot.style.display === "none" ? "flex" : "none";
-    if (chatBot.style.display === "flex") userInput.focus();
-    showGreeting();
-  }
+    chatBot.classList.toggle("hidden");
+    if (!chatBot.classList.contains("hidden")) {
+        userInput.focus();
+        showGreeting();
+    }
+}
 
   // Fetch FAQ data based on language selection
   async function fetchFAQData(language) {
     try {
       const languageCode = languageMap[language.toLowerCase()];
       console.log(`Fetching data for language: ${language} (${languageCode})`);
-
-      // const response = await fetch(`source_${languageCode}.json`);
-      // if (!response.ok) throw new Error(translations[languageCode].loadError);
 
       faqData = languageCode === "en" ? source_en : source_my;
       console.log("Data fetched successfully:", faqData);
@@ -122,7 +120,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (nlpResponse) {
       delayedResponse(nlpResponse); // Handle NLP-detected response
     } else {
-      // Check if input is the "Back to Questions" action
       if (
         input.toLowerCase() ===
           translations[currentLanguage].backToQuestions.toLowerCase() &&
@@ -132,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Check if input is the "Back to Category" action
       if (
         input.toLowerCase() ===
         translations[currentLanguage].backToCategory.toLowerCase()
@@ -142,7 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Check if input matches a category first
       const matchingCategory = findCategoryByName(input);
       if (matchingCategory) {
         loadQuestions(matchingCategory); // Load questions if a category is recognized
@@ -150,7 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      // Check if input matches a question in the last selected category
       if (lastSelectedCategory) {
         const matchingQuestion = findQuestionByName(
           lastSelectedCategory,
@@ -162,7 +156,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      // Fallback if no match for question or category
       const matchingCategories = findMatchingCategories(input);
       if (matchingCategories.length > 0) {
         delayedResponse(
@@ -171,40 +164,32 @@ document.addEventListener("DOMContentLoaded", function () {
         );
       } else {
         delayedResponse(translations[currentLanguage].noMatch);
-        // loadCategories(); // Fallback to showing all categories
       }
     }
   }
 
-  // Helper function to find a category based on input, supporting both languages
   function findCategoryByName(input) {
     return faqData.faq.find(
       (cat) => cat.category.toLowerCase() === input.toLowerCase()
     );
   }
 
-  // Helper function to find a question by name in the specified category
   function findQuestionByName(category, questionText) {
     return category.questions.find(
       (q) => q.question.toLowerCase() === questionText.toLowerCase()
     );
   }
 
-  // Analyze user input using Compromise.js (only for NLP purposes)
   const DIRECTORY_URL = "https://yourwebsite.com/directory";
 
   function analyzeUserInput(input) {
     const doc = nlp(input); // Parse input with Compromise.js
 
-    // Detect dates
     const dates = doc.dates().out("array");
     if (dates.length > 0) {
-      return `${translations[currentLanguage].directoryDate} ${dates.join(
-        ", "
-      )}`;
+      return `${translations[currentLanguage].directoryDate} ${dates.join(", ")}`;
     }
 
-    // Detect people names and create pills for navigation to directory
     const people = doc.people().out("array");
     if (people.length > 0) {
       const namePills = people.map((name) => ({
@@ -218,7 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return null; // Return null if no specific entities are found
   }
 
-  // Find a question across all categories based on input
   function findQuestionInAllCategories(input) {
     for (let category of faqData.faq) {
       const question = category.questions.find((q) =>
@@ -229,14 +213,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return null; // No match found
   }
 
-  // Find matching categories based on input without causing a loop
   function findMatchingCategories(input) {
     return faqData.faq
       .filter((cat) => cat.category.toLowerCase().includes(input.toLowerCase()))
       .map((cat) => ({ question: cat.category }));
   }
 
-  // Handle language selection (disables NLP until language is selected)
   function handleLanguageSelection(language) {
     currentLanguage = languageMap[language.toLowerCase()]; // Set current language code
     addChatMessage(language, "chat-outgoing");
@@ -244,17 +226,14 @@ document.addEventListener("DOMContentLoaded", function () {
     enableChatInput();
   }
 
-  // Enable chat input after language selection
   function enableChatInput() {
     userInput.disabled = false;
-    sendButton.disabled = false;
+    sendLink.classList.remove("disabled");
   }
 
-  // Handle user selection (for categories or questions)
   function handleUserSelection(option) {
     const selectedOption = option.question || option;
 
-    // Check if selection is for language, and handle appropriately
     if (selectedOption.toLowerCase() in languageMap) {
       handleLanguageSelection(selectedOption);
     } else {
@@ -263,7 +242,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Add chat message dynamically
   function addChatMessage(content, className = "chat-incoming", pills = null) {
     const message = document.createElement("li");
     message.className = `${className} chat`;
@@ -273,7 +251,6 @@ document.addEventListener("DOMContentLoaded", function () {
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 
-  // Create pills dynamically
   function createPillsContainer(options) {
     const pillsContainer = document.createElement("div");
     pillsContainer.className = "chat-pills";
@@ -283,7 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
       button.textContent = option.question || option;
       button.type = "button";
 
-      // Check for custom URL and set click handler to redirect
       if (option.url) {
         button.onclick = () => window.open(option.url, "_blank");
       } else {
@@ -296,13 +272,11 @@ document.addEventListener("DOMContentLoaded", function () {
     return pillsContainer;
   }
 
-  // Show list of categories
   function loadCategories() {
     const categories = faqData.faq.map((cat) => ({ question: cat.category }));
     delayedResponse(translations[currentLanguage].categoriesHeader, categories);
   }
 
-  // Load questions for the matched category with "Back to Category" option
   function loadQuestions(category) {
     const questions = category.questions.map((q) => ({ question: q.question }));
     const backToCategoryPill = {
@@ -314,17 +288,14 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // Show the answer to a matched question
   function showAnswer(question) {
     delayedResponse(
       question.answer,
       [{ question: translations[currentLanguage].backToQuestions }],
       500
     );
-    // Do not reset lastSelectedCategory here to allow "Back to Questions" functionality
   }
 
-  // Delayed response with typing indicator
   function delayedResponse(content, pills = null, delay = 1000) {
     const typingIndicator = showTypingIndicator();
     setTimeout(() => {
@@ -333,7 +304,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, delay);
   }
 
-  // Display typing indicator
   function showTypingIndicator() {
     const typing = document.createElement("li");
     typing.className = "chat-incoming typing-indicator";
@@ -346,12 +316,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return typing;
   }
 
-  // Hide typing indicator
   function hideTypingIndicator(indicator) {
     if (indicator) chatbox.removeChild(indicator);
   }
 
-  // Show greeting message with language selection pills
   function showGreeting() {
     const languages = [
       { question: "English", language: "English" },
@@ -359,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
     delayedResponse(
       `${translations["my"].greeting} / ${translations["en"].greeting}`
-    ); // Initial greeting in English
+    );
     delayedResponse(
       `${translations["my"].greeting_continue} / ${translations["en"].greeting_continue}`,
       languages,
@@ -367,18 +335,16 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  // Initialize chatbot on page load
-  // window.onload = showGreeting;
-
-  // Event listeners for chatbot interaction
   toggleButton.addEventListener("click", toggleChatBot);
-  colseChatBot.addEventListener("click", toggleChatBot);
-  sendButton.addEventListener("click", handleUserInput);
+  closeChatBot.addEventListener("click", toggleChatBot);
+  sendLink.addEventListener("click", function(event) {
+    event.preventDefault(); // Prevent default link behavior
+    handleUserInput();
+  });
   userInput.addEventListener("keypress", (event) => {
     if (event.key === "Enter") handleUserInput();
   });
 
-  // Handle user input from the text field
   function handleUserInput() {
     const input = userInput.value.trim();
     if (!input) return;
@@ -386,6 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
     userInput.value = "";
     processInput(input);
   }
+
 
   const source_en = {
     faq: [
