@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Multi-Item Carousel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Ensure images are consistently sized */
+        .carousel-item img {
+            width: 100%; 
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Ensures image covers area without stretching */
+        }
+        .carousel-inner {
+            display: flex;
+        }
+        /* Container for each item inside the carousel item */
+        .carousel-item .col {
+            flex: 1 0 33.33%; /* Flexbox for 3 items per slide */
+            max-width: 33.33%;
+            padding: 5px; /* Space between images */
+            text-align: center; /* Center-align text under images */
+        }
+
+        /* Control Icon Colors */
+        .carousel-control-prev-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+        }
+
+        .carousel-control-next-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 position-relative">
+    <h2 class="text-center mb-4">Social Media Carousel</h2>
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <!-- Indicators (dots) -->
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        </ol>
+
+        <!-- Carousel Inner (Slides) -->
+        <div class="carousel-inner">
+            <!-- First slide with 3 images -->
+            <div class="carousel-item active">
+                <div class="row">
+                    <div class="col">
+                        <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 1">
+                        <div><h5>Slide 1 - Image 1</h5></div>
+                    </div>
+                    <div class="col">
+                        <a href="https://www.google.com">
+                            <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 2">
+                            <div><h5>Slide 1 - Image 2</h5></div>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 3">
+                        <div><h5>Slide 1 - Image 3</h5></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second slide with 3 images -->
+            <div class="carousel-item">
+                <div class="row">
+                    <div class="col">
+                        <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 4">
+                        <div><h5>Slide 2 - Image 1</h5></div>
+                    </div>
+                    <div class="col">
+                        <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 5">
+                        <div><h5>Slide 2 - Image 2</h5></div>
+                    </div>
+                    <div class="col">
+                        <img src="https://via.placeholder.com/200x200" class="d-block w-100" alt="Image 6">
+                        <div><h5>Slide 2 - Image 3</h5></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carousel Controls (Previous and Next) -->
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies (jQuery and Popper.js) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

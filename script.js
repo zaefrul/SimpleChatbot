@@ -2,12 +2,14 @@ document.addEventListener("DOMContentLoaded", function () {
   let faqData = {}; // Store the FAQ data
   let currentLanguage = ""; // Track the selected language
   let isLanguageSelected = false; // Track if language is selected
+  const directoryUrlEn = "/en/directory/staff?search="; // Directory URL
+  const directoryUrlMy = "/my/directory/staff?search="; // Directory URL
 
   // Translation object for multilingual support
   const translations = {
     en: {
       greeting:
-        "Hello and welcome! I’m LYNA, your friendly assistant here to help you with any questions or information you need.",
+        "Hello and welcome! I’m Captain MOT, your friendly assistant here to help you with any questions or information you need.",
       greeting_continue:
         "😊 To get started, please select your preferred language:",
       selectLanguage: "Please select a language first.",
@@ -34,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     my: {
       greeting:
-        "Hai dan selamat datang! Saya LYNA, pembantu mesra anda yang sedia membantu dengan apa sahaja soalan atau maklumat yang anda perlukan.",
+        "Hai dan selamat datang! Saya Kapten MOT, pembantu mesra anda yang sedia membantu dengan apa sahaja soalan atau maklumat yang anda perlukan.",
       greeting_continue: "😊 Untuk mula, sila pilih bahasa pilihan anda:",
       selectLanguage: "Sila pilih bahasa terlebih dahulu.",
       loadError: "Tidak dapat memuatkan data FAQ. Sila cuba lagi.",
@@ -180,21 +182,19 @@ document.addEventListener("DOMContentLoaded", function () {
     );
   }
 
-  const DIRECTORY_URL = "https://yourwebsite.com/directory";
-
   function analyzeUserInput(input) {
     const doc = nlp(input); // Parse input with Compromise.js
 
     const dates = doc.dates().out("array");
-    if (dates.length > 0) {
-      return `${translations[currentLanguage].directoryDate} ${dates.join(", ")}`;
-    }
+    // if (dates.length > 0) {
+    //   return `${translations[currentLanguage].directoryDate} ${dates.join(", ")}`;
+    // }
 
     const people = doc.people().out("array");
     if (people.length > 0) {
       const namePills = people.map((name) => ({
-        question: name,
-        url: `${DIRECTORY_URL}?search=${encodeURIComponent(name)}`,
+        question: currentLanguage == 'en' ? `Find "${name}" in Directory` : `Cari "${name}" di Direktori`,
+        url: currentLanguage == 'en' ? `${document.location.origin}${directoryUrlEn}${encodeURIComponent(name)}` : `${directoryUrlMy}${encodeURIComponent(name)}`,
       }));
       delayedResponse(translations[currentLanguage].referringTo, namePills);
       return null; // Pills are created, so no further response is needed here

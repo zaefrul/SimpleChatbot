@@ -1,14 +1,3 @@
-/* General Styling */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
 /* Floating ChatBot Button */
 .chatbot-toggle {
     position: fixed;
@@ -269,7 +258,7 @@ body {
     display: inline-block; /* Makes it behave like a button */
     padding: 10px 20px;
     background-color: #193B6A; /* Same color as the previous button */
-    color: white;
+    color: white !important;
     text-align: center;
     border-radius: 25px;
     cursor: pointer;
@@ -281,11 +270,23 @@ body {
 }
 
 .custom-button:hover {
-    background-color: #45a049; /* Change color on hover */
+    background-color: #5456c0; /* Change color on hover */
 }
 
 .custom-button:active {
     transform: scale(0.98); /* Slight shrink effect on click */
+}
+
+.custom-button:focus {
+    outline: none; /* Remove default focus outline */
+}
+
+.custom-button:disabled {
+    opacity: 0.5; /* Dim the button when disabled */
+}
+
+.custom-button:visited {
+    color: white !important; /* Keep the text color consistent */
 }
 
 /* Disabled State */
@@ -304,4 +305,9 @@ body {
 .custom-button .button-icon {
     margin-right: 8px;
     vertical-align: middle;
+}
+
+.kapten-mot {
+    width: auto;
+    height: 100px;
 }
